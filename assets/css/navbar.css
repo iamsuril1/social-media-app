@@ -1,0 +1,159 @@
+/* ===== Base Reset & Typography ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #1c1e21;
+    line-height: 1.5;
+}
+
+a {
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* ===== Error & Flash Messages ===== */
+.error-list {
+    max-width: 600px;
+    margin: 15px auto;
+    background: #ffebe8;
+    border: 1px solid #f5c6cb;
+    color: #c0392b;
+    padding: 10px 15px;
+    border-radius: 8px;
+    list-style: none;
+    font-size: 13px;
+}
+
+.flash-message {
+    max-width: 600px;
+    margin: 15px auto;
+    background: #e3f8ee;
+    border: 1px solid #a7e6c6;
+    color: #0f7a53;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* ===== Navbar ===== */
+.navbar {
+    background: #fff;
+    padding: 12px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 800;
+    color: #2f5aff;
+}
+
+.navbar-logo .logo-icon {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(135deg, #2f5aff, #6a3df2);
+    color: #fff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.navbar-links {
+    display: flex;
+    gap: 26px;
+}
+
+.navbar-links a {
+    color: #444;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 6px 2px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.navbar-links a:hover {
+    color: #2f5aff;
+    border-color: #2f5aff;
+}
+
+.navbar-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.navbar-username {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+.btn-logout {
+    background: #f0f2f5;
+    color: #444;
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.btn-logout:hover {
+    background: #ffebe8;
+    color: #c0392b;
+}
+
+/* ===== Page Content Wrapper ===== */
+.page-content {
+    max-width: 700px;
+    margin: 25px auto;
+    padding: 0 15px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 700px) {
+    .navbar {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 16px;
+    }
+
+    .navbar-links {
+        order: 3;
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .navbar-links a {
+        font-size: 12.5px;
+    }
+}
