@@ -1,0 +1,110 @@
+/* ===== Welcome Banner ===== */
+.welcome-banner {
+    background: #fff;
+    padding: 24px 28px;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: slideFadeIn 0.5s ease-out forwards;
+}
+
+@keyframes slideFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.welcome-text h2 {
+    font-size: 21px;
+    margin-bottom: 6px;
+    color: #1c1e21;
+}
+
+.welcome-text p {
+    color: #65676b;
+    font-size: 14px;
+}
+
+.wave {
+    display: inline-block;
+    animation: waveHand 2.2s ease-in-out infinite;
+    transform-origin: 70% 70%;
+}
+
+@keyframes waveHand {
+    0%, 100% { transform: rotate(0deg); }
+    10% { transform: rotate(14deg); }
+    20% { transform: rotate(-8deg); }
+    30% { transform: rotate(14deg); }
+    40% { transform: rotate(-4deg); }
+    50% { transform: rotate(10deg); }
+    60%, 100% { transform: rotate(0deg); }
+}
+
+/* ===== Feed Placeholder ===== */
+.feed-placeholder {
+    background: #fff;
+    padding: 50px 24px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    opacity: 0;
+    animation: slideFadeIn 0.5s ease-out 0.15s forwards;
+}
+
+.feed-placeholder p {
+    font-size: 15px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 6px;
+}
+
+.placeholder-subtext {
+    font-size: 13px;
+    color: #8a8d91;
+}
+
+/* ===== Animated bouncing dots ===== */
+.placeholder-icon {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #2f5aff;
+    animation: bounce 1.2s ease-in-out infinite;
+}
+
+.dot-1 { animation-delay: 0s; background: #2f5aff; }
+.dot-2 { animation-delay: 0.15s; background: #6a3df2; }
+.dot-3 { animation-delay: 0.3s; background: #9c6bff; }
+
+@keyframes bounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.6;
+    }
+    30% {
+        transform: translateY(-10px);
+        opacity: 1;
+    }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+    .welcome-banner,
+    .feed-placeholder {
+        padding: 20px 18px;
+    }
+}
