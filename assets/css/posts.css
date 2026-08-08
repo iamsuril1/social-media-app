@@ -87,8 +87,7 @@
     opacity: 0.9;
 }
 
-/* ===== Error list (this page uses base error styling from navbar.css already,
-   but keeping a local fallback in case posts.css is ever loaded alone) ===== */
+/* ===== Error list ===== */
 .error-list {
     background: #ffebe8;
     border: 1px solid #f5c6cb;
