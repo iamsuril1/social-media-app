@@ -1,6 +1,4 @@
 <?php
-// This file expects $conn to already be available (included after db.php)
-
 $posts_query = "SELECT posts.id, posts.content, posts.image, posts.created_at, 
                         users.id AS user_id, users.name, users.profile_pic
                  FROM posts
@@ -8,6 +6,7 @@ $posts_query = "SELECT posts.id, posts.content, posts.image, posts.created_at,
                  ORDER BY posts.created_at DESC";
 
 $posts_result = mysqli_query($conn, $posts_query);
+$current_user_id = currentUserId();
 ?>
 
 <div class="posts-feed">
@@ -37,6 +36,23 @@ $posts_result = mysqli_query($conn, $posts_query);
                         <span class="post-author-name"><?php echo htmlspecialchars($post['name']); ?></span>
                         <span class="post-time"><?php echo timeAgo($post['created_at']); ?></span>
                     </div>
+
+                    <?php if ($post['user_id'] == $current_user_id): ?>
+                        <div class="post-menu">
+                            <button class="post-menu-btn" onclick="togglePostMenu(<?php echo $post['id']; ?>)">⋯</button>
+                            <div class="post-menu-dropdown" id="menu-<?php echo $post['id']; ?>">
+                                <a href="/social-media-app/posts/edit.php?id=<?php echo $post['id']; ?>"
+                                   class="post-menu-item">
+                                   ✏️ Edit
+                                </a>
+                                <a href="/social-media-app/posts/delete.php?id=<?php echo $post['id']; ?>"
+                                   class="post-menu-item delete"
+                                   onclick="return confirm('Delete this post? This cannot be undone.');">
+                                   🗑 Delete
+                                </a>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
 
                 <?php if (!empty($post['content'])): ?>
@@ -63,3 +79,22 @@ $posts_result = mysqli_query($conn, $posts_query);
 
     <?php endif; ?>
 </div>
+
+<script>
+function togglePostMenu(postId) {
+    const menu = document.getElementById('menu-' + postId);
+    const isOpen = menu.classList.contains('show');
+
+    document.querySelectorAll('.post-menu-dropdown.show').forEach(el => el.classList.remove('show'));
+
+    if (!isOpen) {
+        menu.classList.add('show');
+    }
+}
+
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.post-menu')) {
+        document.querySelectorAll('.post-menu-dropdown.show').forEach(el => el.classList.remove('show'));
+    }
+});
+</script>
