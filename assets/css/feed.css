@@ -164,6 +164,7 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 12px;
+    position: relative;
 }
 
 .post-avatar {
@@ -240,18 +241,7 @@
     cursor: not-allowed;
 }
 
-/* ===== Responsive ===== */
-@media (max-width: 480px) {
-    .welcome-banner,
-    .feed-placeholder {
-        padding: 20px 18px;
-    }
-}
 /* ===== Post Options Menu (⋯) ===== */
-.post-header {
-    position: relative;
-}
-
 .post-menu {
     margin-left: auto;
     position: relative;
@@ -326,4 +316,51 @@
 
 .post-menu-item.delete:hover {
     background: #ffebf0;
+}
+
+/* ===== Like count / stats row ===== */
+.post-stats {
+    padding: 4px 0 10px 0;
+    border-bottom: 1px solid #f0f2f5;
+    margin-bottom: 6px;
+}
+
+.like-count-text {
+    font-size: 13px;
+    color: #65676b;
+    font-weight: 600;
+}
+
+/* ===== Like button active state ===== */
+.post-action-btn.like-btn {
+    cursor: pointer;
+    color: #8a8d91;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.post-action-btn.like-btn:hover {
+    background: #f0f2f5;
+    color: #2f5aff;
+}
+
+.post-action-btn.like-btn:active {
+    transform: scale(0.96);
+}
+
+.post-action-btn.like-btn.liked {
+    color: #2f5aff;
+    font-weight: 700;
+}
+
+.post-action-btn.like-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+    .welcome-banner,
+    .feed-placeholder {
+        padding: 20px 18px;
+    }
 }
