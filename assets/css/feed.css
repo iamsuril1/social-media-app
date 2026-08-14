@@ -509,3 +509,52 @@
     background: #f0f2f5;
     color: #2f5aff;
 }
+
+/* ===== Shared post banner ===== */
+.shared-banner {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #65676b;
+    background: #f0f2f5;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.shared-banner strong {
+    color: #2f5aff;
+}
+
+/* ===== Share button ===== */
+.post-action-btn.share-btn {
+    cursor: pointer;
+    color: #8a8d91;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.post-action-btn.share-btn:hover {
+    background: #f0f2f5;
+    color: #0f9d78;
+}
+
+.post-action-btn.share-btn:active {
+    transform: scale(0.96);
+}
+
+.post-action-btn.share-btn.shared {
+    color: #0f9d78;
+    font-weight: 700;
+}
+
+.post-action-btn.share-btn:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.share-count-text {
+    font-size: 13px;
+    color: #65676b;
+    font-weight: 600;
+}
