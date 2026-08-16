@@ -54,6 +54,14 @@ mysqli_stmt_bind_param($discover_stmt, $types, ...$connected_ids);
 mysqli_stmt_execute($discover_stmt);
 $discover_users = mysqli_fetch_all(mysqli_stmt_get_result($discover_stmt), MYSQLI_ASSOC);
 mysqli_stmt_close($discover_stmt);
+
+// 5. Who am I currently following? (for showing Follow/Following state in Discover)
+$my_follows_stmt = mysqli_prepare($conn, "SELECT following_id FROM follows WHERE follower_id = ?");
+mysqli_stmt_bind_param($my_follows_stmt, "i", $user_id);
+mysqli_stmt_execute($my_follows_stmt);
+$my_follows_result = mysqli_fetch_all(mysqli_stmt_get_result($my_follows_stmt), MYSQLI_ASSOC);
+mysqli_stmt_close($my_follows_stmt);
+$my_following_ids = array_column($my_follows_result, 'following_id');
 ?>
 
 <?php if ($flash): ?>
@@ -121,6 +129,11 @@ mysqli_stmt_close($discover_stmt);
                         <span class="user-name"><?php echo htmlspecialchars($person['name']); ?></span>
                     </div>
                     <div class="user-actions">
+                        <?php $is_following = in_array($person['id'], $my_following_ids); ?>
+                        <button class="follow-toggle-btn <?php echo $is_following ? 'following' : ''; ?>"
+                                onclick="toggleFollow(<?php echo $person['id']; ?>, this)">
+                            <?php echo $is_following ? 'Following' : 'Follow'; ?>
+                        </button>
                         <a href="/social-media-app/friends/add.php?id=<?php echo $person['id']; ?>" class="btn-add">Add Friend</a>
                     </div>
                 </div>
@@ -128,5 +141,26 @@ mysqli_stmt_close($discover_stmt);
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+function toggleFollow(targetId, btn) {
+    btn.disabled = true;
+
+    fetch('/social-media-app/follow/toggle.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'user_id=' + encodeURIComponent(targetId)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            btn.textContent = data.following ? 'Following' : 'Follow';
+            btn.classList.toggle('following', data.following);
+        }
+        btn.disabled = false;
+    })
+    .catch(() => { btn.disabled = false; });
+}
+</script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
