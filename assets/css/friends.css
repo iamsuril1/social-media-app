@@ -1,0 +1,147 @@
+.friends-card {
+    background: #fff;
+    padding: 22px 24px;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: slideFadeIn 0.4s ease-out forwards;
+}
+
+@keyframes slideFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.friends-card h2 {
+    font-size: 17px;
+    color: #1c1e21;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.count-badge {
+    background: #2f5aff;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 20px;
+}
+
+.empty-text {
+    color: #8a8d91;
+    font-size: 13.5px;
+}
+
+.user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.user-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 8px;
+    border-radius: 10px;
+    transition: background 0.15s ease;
+}
+
+.user-row:hover {
+    background: #f7f8fb;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    background: linear-gradient(135deg, #2f5aff, #6a3df2);
+    flex-shrink: 0;
+}
+
+.friend-avatar {
+    background: linear-gradient(135deg, #0f9d78, #0b7a5c);
+}
+
+.discover-avatar {
+    background: linear-gradient(135deg, #ff8a3c, #ff6b6b);
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1c1e21;
+}
+
+.user-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-accept,
+.btn-add {
+    padding: 7px 16px;
+    background: linear-gradient(135deg, #2f5aff, #6a3df2);
+    color: #fff;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: transform 0.15s ease, opacity 0.2s ease;
+}
+
+.btn-accept:hover,
+.btn-add:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+}
+
+.btn-reject,
+.btn-remove {
+    padding: 7px 16px;
+    background: #f0f2f5;
+    color: #555;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.btn-reject:hover {
+    background: #ffebf0;
+    color: #e0245e;
+    text-decoration: none;
+}
+
+.btn-remove:hover {
+    background: #ffebf0;
+    color: #e0245e;
+    text-decoration: none;
+}
+
+@media (max-width: 480px) {
+    .user-row {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .user-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}

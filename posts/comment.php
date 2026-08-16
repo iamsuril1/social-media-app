@@ -58,7 +58,6 @@ $user_result = mysqli_stmt_get_result($user_stmt);
 $user_name = mysqli_fetch_assoc($user_result)['name'];
 mysqli_stmt_close($user_stmt);
 
-// Get updated total comment count for this post
 $count_stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM comments WHERE post_id = ?");
 mysqli_stmt_bind_param($count_stmt, "i", $post_id);
 mysqli_stmt_execute($count_stmt);
