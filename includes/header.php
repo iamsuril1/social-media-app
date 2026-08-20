@@ -13,6 +13,11 @@ requireLogin(); // every page that includes header.php is auto-protected
     <?php if (isset($pageCss)): ?>
         <link rel="stylesheet" href="/social-media-app/assets/css/<?php echo htmlspecialchars($pageCss); ?>">
     <?php endif; ?>
+    <?php if (isset($extraCss) && is_array($extraCss)): ?>
+        <?php foreach ($extraCss as $css): ?>
+            <link rel="stylesheet" href="/social-media-app/assets/css/<?php echo htmlspecialchars($css); ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
 </head>
 <body>
 
