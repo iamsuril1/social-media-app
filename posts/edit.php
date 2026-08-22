@@ -1,89 +1,76 @@
 <?php
-$pageTitle = "Edit Post";
-$pageCss = "posts.css";
+$pageTitle = "Edit Profile";
+$pageCss = "profile.css";
 require_once __DIR__ . '/../includes/header.php';
 
 $user_id = currentUserId();
-$post_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 $errors = [];
 
-if ($post_id <= 0) {
-    setFlash("Invalid post.");
-    redirect('/social-media-app/index.php');
-}
-
-// Fetch the post and verify ownership
-$stmt = mysqli_prepare($conn, "SELECT * FROM posts WHERE id = ?");
-mysqli_stmt_bind_param($stmt, "i", $post_id);
+// Fetch current data
+$stmt = mysqli_prepare($conn, "SELECT name, bio, profile_pic FROM users WHERE id = ?");
+mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$post = mysqli_fetch_assoc($result);
+$user = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 mysqli_stmt_close($stmt);
 
-if (!$post) {
-    setFlash("Post not found.");
-    redirect('/social-media-app/index.php');
-}
-
-if ($post['user_id'] != $user_id) {
-    setFlash("You don't have permission to edit this post.");
-    redirect('/social-media-app/index.php');
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = sanitize($_POST['name']);
+    $bio = sanitize($_POST['bio']);
+    $remove_pic = isset($_POST['remove_pic']);
+    $profile_pic = $user['profile_pic']; // keep existing by default
 
-    $content = sanitize($_POST['content']);
-    $remove_image = isset($_POST['remove_image']) ? true : false;
-    $image_name = $post['image']; // keep existing image by default
-
-    if (empty($content) && empty($_FILES['image']['name']) && (empty($image_name) || $remove_image)) {
-        $errors[] = "Post must have text or an image.";
+    if (empty($name)) {
+        $errors[] = "Name cannot be empty.";
     }
 
-    if (strlen($content) > 2000) {
-        $errors[] = "Post is too long (max 2000 characters).";
+    if (strlen($name) > 100) {
+        $errors[] = "Name is too long.";
     }
 
-    // Remove existing image if requested
-    if ($remove_image && !empty($post['image'])) {
-        $old_path = __DIR__ . '/../assets/uploads/posts/' . $post['image'];
+    if (strlen($bio) > 300) {
+        $errors[] = "Bio must be under 300 characters.";
+    }
+
+    // Remove existing picture if requested
+    if ($remove_pic && !empty($user['profile_pic'])) {
+        $old_path = __DIR__ . '/../assets/uploads/profile/' . $user['profile_pic'];
         if (file_exists($old_path)) {
             unlink($old_path);
         }
-        $image_name = null;
+        $profile_pic = null;
     }
 
-    // Handle new image upload (replaces existing one)
-    if (!empty($_FILES['image']['name'])) {
+    // Handle new picture upload
+    if (!empty($_FILES['profile_pic']['name'])) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        $max_size = 5 * 1024 * 1024;
+        $max_size = 3 * 1024 * 1024; // 3MB
 
-        $file_type = $_FILES['image']['type'];
-        $file_size = $_FILES['image']['size'];
-        $file_tmp = $_FILES['image']['tmp_name'];
-        $file_error = $_FILES['image']['error'];
+        $file_type = $_FILES['profile_pic']['type'];
+        $file_size = $_FILES['profile_pic']['size'];
+        $file_tmp = $_FILES['profile_pic']['tmp_name'];
+        $file_error = $_FILES['profile_pic']['error'];
 
         if ($file_error !== UPLOAD_ERR_OK) {
             $errors[] = "There was an error uploading the image.";
         } elseif (!in_array($file_type, $allowed_types)) {
             $errors[] = "Only JPG, PNG, GIF, or WEBP images are allowed.";
         } elseif ($file_size > $max_size) {
-            $errors[] = "Image must be smaller than 5MB.";
+            $errors[] = "Image must be smaller than 3MB.";
         } else {
-            // Delete the old image before saving the new one
-            if (!empty($post['image'])) {
-                $old_path = __DIR__ . '/../assets/uploads/posts/' . $post['image'];
+            // Delete the old picture before saving the new one
+            if (!empty($user['profile_pic'])) {
+                $old_path = __DIR__ . '/../assets/uploads/profile/' . $user['profile_pic'];
                 if (file_exists($old_path)) {
                     unlink($old_path);
                 }
             }
 
-            $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            $new_image_name = "post_" . $user_id . "_" . time() . "_" . uniqid() . "." . $ext;
-            $upload_path = __DIR__ . '/../assets/uploads/posts/' . $new_image_name;
+            $ext = pathinfo($_FILES['profile_pic']['name'], PATHINFO_EXTENSION);
+            $new_pic_name = "user_" . $user_id . "_" . time() . "_" . uniqid() . "." . $ext;
+            $upload_path = __DIR__ . '/../assets/uploads/profile/' . $new_pic_name;
 
             if (move_uploaded_file($file_tmp, $upload_path)) {
-                $image_name = $new_image_name;
+                $profile_pic = $new_pic_name;
             } else {
                 $errors[] = "Failed to save the uploaded image.";
             }
@@ -91,26 +78,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        $stmt = mysqli_prepare($conn, "UPDATE posts SET content = ?, image = ? WHERE id = ? AND user_id = ?");
-        mysqli_stmt_bind_param($stmt, "ssii", $content, $image_name, $post_id, $user_id);
+        $stmt = mysqli_prepare($conn, "UPDATE users SET name = ?, bio = ?, profile_pic = ? WHERE id = ?");
+        mysqli_stmt_bind_param($stmt, "sssi", $name, $bio, $profile_pic, $user_id);
 
         if (mysqli_stmt_execute($stmt)) {
             mysqli_stmt_close($stmt);
-            setFlash("Post updated successfully!");
-            redirect('/social-media-app/index.php');
+            $_SESSION['user_name'] = $name;
+            $_SESSION['profile_pic'] = $profile_pic;
+            setFlash("Profile updated successfully!");
+            redirect('/social-media-app/profile/view.php');
         } else {
             $errors[] = "Something went wrong. Please try again.";
         }
     }
 
-    // Refresh $post data in memory so the form re-renders correctly on error
-    $post['content'] = $_POST['content'];
-    $post['image'] = $image_name;
+    $user['name'] = $name;
+    $user['bio'] = $bio;
+    $user['profile_pic'] = $profile_pic;
 }
 ?>
 
-<div class="create-post-card">
-    <h2>Edit Post</h2>
+<div class="edit-profile-card">
+    <h2>Edit Profile</h2>
     <div class="accent-bar"></div>
 
     <?php if (!empty($errors)): ?>
@@ -122,50 +111,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="POST" action="" enctype="multipart/form-data">
-        <div class="form-group">
-            <textarea name="content" rows="5"><?php echo htmlspecialchars($post['content']); ?></textarea>
-        </div>
 
-        <?php if (!empty($post['image'])): ?>
-            <div class="current-image-box">
-                <img src="/social-media-app/assets/uploads/posts/<?php echo htmlspecialchars($post['image']); ?>" alt="Current image" class="current-image">
-                <label class="remove-image-label">
-                    <input type="checkbox" name="remove_image" value="1">
-                    Remove this image
-                </label>
+        <div class="profile-pic-upload-box">
+            <div class="current-pic-preview" id="picPreviewWrapper">
+                <?php echo renderAvatar($user['name'], $user['profile_pic'], 'avatar-preview-large'); ?>
             </div>
-        <?php endif; ?>
-
-        <div class="image-upload-box">
-            <label for="image" class="image-upload-label">
-                <span class="upload-icon">📷</span>
-                <span id="uploadText"><?php echo !empty($post['image']) ? "Replace photo" : "Add a photo (optional)"; ?></span>
-            </label>
-            <input type="file" name="image" id="image" accept="image/*" onchange="previewImage(event)">
-            <img id="imagePreview" class="image-preview" style="display:none;">
+            <div class="pic-upload-controls">
+                <label for="profile_pic" class="btn-upload-pic">Change Photo</label>
+                <input type="file" name="profile_pic" id="profile_pic" accept="image/*" onchange="previewPic(event)">
+                <?php if (!empty($user['profile_pic'])): ?>
+                    <label class="remove-pic-label">
+                        <input type="checkbox" name="remove_pic" value="1">
+                        Remove current photo
+                    </label>
+                <?php endif; ?>
+            </div>
         </div>
 
-        <div class="create-post-footer">
-            <a href="/social-media-app/index.php" class="btn-cancel">Cancel</a>
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" name="name" value="<?php echo htmlspecialchars($user['name']); ?>">
+        </div>
+
+        <div class="form-group">
+            <label>Bio</label>
+            <textarea name="bio" rows="4" placeholder="Tell people a little about yourself..."><?php echo htmlspecialchars($user['bio'] ?? ''); ?></textarea>
+            <span class="char-hint">Max 300 characters</span>
+        </div>
+
+        <div class="edit-profile-footer">
+            <a href="/social-media-app/profile/view.php" class="btn-cancel">Cancel</a>
             <button type="submit" class="btn-post">Save Changes</button>
         </div>
     </form>
 </div>
 
 <script>
-function previewImage(event) {
-    const preview = document.getElementById('imagePreview');
-    const uploadText = document.getElementById('uploadText');
+function previewPic(event) {
+    const wrapper = document.getElementById('picPreviewWrapper');
     const file = event.target.files[0];
-
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            preview.src = e.target.result;
-            preview.style.display = 'block';
+            wrapper.innerHTML = '<img src="' + e.target.result + '" class="avatar-img avatar-preview-large" alt="Preview">';
         };
         reader.readAsDataURL(file);
-        uploadText.textContent = file.name;
     }
 }
 </script>

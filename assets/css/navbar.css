@@ -131,6 +131,21 @@ img {
     color: #c0392b;
 }
 
+/* ===== Navbar Avatar ===== */
+.navbar-avatar-link {
+    display: block;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    overflow: hidden;
+    font-size: 14px;
+}
+
+.navbar-avatar {
+    width: 100%;
+    height: 100%;
+}
+
 /* ===== Page Content Wrapper ===== */
 .page-content {
     max-width: 700px;

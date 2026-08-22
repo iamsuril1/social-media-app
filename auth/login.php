@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        $stmt = mysqli_prepare($conn, "SELECT id, name, password FROM users WHERE email = ?");
+        $stmt = mysqli_prepare($conn, "SELECT id, name, password, profile_pic FROM users WHERE email = ?");
         mysqli_stmt_bind_param($stmt, "s", $email);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
@@ -23,8 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_close($stmt);
 
         if ($user && password_verify($password, $user['password'])) {
+            // Correct password — log the user in
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
+            $_SESSION['profile_pic'] = $user['profile_pic'];
 
             redirect('/social-media-app/index.php');
         } else {
@@ -47,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="login-split">
 
-        <!-- Left decorative panel -->
         <div class="login-illustration">
             <div class="blob blob-1"></div>
             <div class="blob blob-2"></div>
@@ -64,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
 
-        <!-- Right form panel -->
         <div class="login-form-panel">
             <h2>Login</h2>
             <div class="login-accent-bar"></div>

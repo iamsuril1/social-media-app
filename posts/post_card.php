@@ -32,7 +32,8 @@ $user_shared = mysqli_stmt_num_rows($user_shared_stmt) > 0;
 mysqli_stmt_close($user_shared_stmt);
 
 $comments_stmt = mysqli_prepare($conn, "SELECT comments.id, comments.comment, comments.created_at,
-                                                 users.id AS commenter_id, users.name AS commenter_name
+                                                 users.id AS commenter_id, users.name AS commenter_name,
+                                                 users.profile_pic AS commenter_profile_pic
                                           FROM comments
                                           JOIN users ON comments.user_id = users.id
                                           WHERE comments.post_id = ?
@@ -55,7 +56,7 @@ $dom_id = $is_shared_entry ? $post_id . '_s' . $row['sharer_id'] : (string) $pos
     <?php endif; ?>
 
     <div class="post-header">
-        <div class="post-avatar"><?php echo strtoupper(substr($row['author_name'], 0, 1)); ?></div>
+        <div class="post-avatar"><?php echo renderAvatar($row['author_name'], $row['author_profile_pic'] ?? null, 'post-avatar-img'); ?></div>
         <div class="post-author-info">
             <span class="post-author-name"><?php echo htmlspecialchars($row['author_name']); ?></span>
             <span class="post-time"><?php echo timeAgo($row['post_created_at']); ?></span>
@@ -115,7 +116,7 @@ $dom_id = $is_shared_entry ? $post_id . '_s' . $row['sharer_id'] : (string) $pos
         <div class="comments-list" id="commentsList-<?php echo $dom_id; ?>">
             <?php foreach ($comments as $c): ?>
                 <div class="comment-item" id="comment-<?php echo $c['id']; ?>-<?php echo $dom_id; ?>">
-                    <div class="comment-avatar"><?php echo strtoupper(substr($c['commenter_name'], 0, 1)); ?></div>
+                    <div class="comment-avatar"><?php echo renderAvatar($c['commenter_name'], $c['commenter_profile_pic'] ?? null, 'comment-avatar-img'); ?></div>
                     <div class="comment-bubble">
                         <span class="comment-author"><?php echo htmlspecialchars($c['commenter_name']); ?></span>
                         <span class="comment-text"><?php echo nl2br(htmlspecialchars($c['comment'])); ?></span>
@@ -128,7 +129,7 @@ $dom_id = $is_shared_entry ? $post_id . '_s' . $row['sharer_id'] : (string) $pos
         </div>
 
         <div class="comment-form-row">
-            <div class="comment-avatar comment-avatar-self"><?php echo strtoupper(substr($_SESSION['user_name'], 0, 1)); ?></div>
+            <div class="comment-avatar comment-avatar-self"><?php echo renderAvatar($_SESSION['user_name'], $_SESSION['profile_pic'] ?? null, 'comment-avatar-img'); ?></div>
             <input type="text" class="comment-input" id="commentInput-<?php echo $dom_id; ?>"
                    placeholder="Write a comment..."
                    onkeypress="if(event.key==='Enter'){submitComment(<?php echo $post_id; ?>, '<?php echo $dom_id; ?>'); event.preventDefault();}">

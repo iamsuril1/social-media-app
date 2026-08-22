@@ -9,7 +9,6 @@ $profile_id = isset($_GET['id']) ? (int) $_GET['id'] : $current_user_id;
 $is_own_profile = ($profile_id == $current_user_id);
 $flash = getFlash();
 
-// Fetch profile user
 $stmt = mysqli_prepare($conn, "SELECT id, name, email, bio, profile_pic, created_at FROM users WHERE id = ?");
 mysqli_stmt_bind_param($stmt, "i", $profile_id);
 mysqli_stmt_execute($stmt);
@@ -21,7 +20,6 @@ if (!$profile_user) {
     redirect('/social-media-app/index.php');
 }
 
-// Friend count
 $friend_count_stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM friends 
                                              WHERE (user_id = ? OR friend_id = ?) AND status = 'accepted'");
 mysqli_stmt_bind_param($friend_count_stmt, "ii", $profile_id, $profile_id);
@@ -29,7 +27,6 @@ mysqli_stmt_execute($friend_count_stmt);
 $friend_count = mysqli_fetch_assoc(mysqli_stmt_get_result($friend_count_stmt))['total'];
 mysqli_stmt_close($friend_count_stmt);
 
-// Follower / following counts
 $followers_stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM follows WHERE following_id = ?");
 mysqli_stmt_bind_param($followers_stmt, "i", $profile_id);
 mysqli_stmt_execute($followers_stmt);
@@ -42,8 +39,7 @@ mysqli_stmt_execute($following_stmt);
 $following_count = mysqli_fetch_assoc(mysqli_stmt_get_result($following_stmt))['total'];
 mysqli_stmt_close($following_stmt);
 
-// Relationship status with this profile (only needed when viewing someone else)
-$friend_status = null; // null, 'pending_sent', 'pending_received', 'accepted'
+$friend_status = null;
 $is_following = false;
 
 if (!$is_own_profile) {
@@ -72,9 +68,8 @@ if (!$is_own_profile) {
     mysqli_stmt_close($follow_stmt);
 }
 
-// This user's own posts (original posts only, newest first)
 $posts_stmt = mysqli_prepare($conn, "SELECT posts.id AS post_id, posts.content, posts.image, posts.created_at AS post_created_at,
-                                             users.id AS author_id, users.name AS author_name,
+                                             users.id AS author_id, users.name AS author_name, users.profile_pic AS author_profile_pic,
                                              NULL AS sharer_id, NULL AS sharer_name
                                       FROM posts
                                       JOIN users ON posts.user_id = users.id
@@ -95,7 +90,7 @@ mysqli_stmt_close($posts_stmt);
 
     <div class="profile-info-row">
         <div class="profile-avatar-large">
-            <?php echo strtoupper(substr($profile_user['name'], 0, 1)); ?>
+            <?php echo renderAvatar($profile_user['name'], $profile_user['profile_pic'], 'avatar-preview-large'); ?>
         </div>
 
         <div class="profile-details">

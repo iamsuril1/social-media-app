@@ -36,6 +36,9 @@ requireLogin(); // every page that includes header.php is auto-protected
     </div>
 
     <div class="navbar-user">
+        <a href="/social-media-app/profile/view.php" class="navbar-avatar-link">
+            <?php echo renderAvatar($_SESSION['user_name'], $_SESSION['profile_pic'] ?? null, 'navbar-avatar'); ?>
+        </a>
         <span class="navbar-username"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
         <a href="/social-media-app/auth/logout.php" class="btn-logout">Logout</a>
     </div>
