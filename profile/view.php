@@ -129,6 +129,12 @@ mysqli_stmt_close($posts_stmt);
                     <span class="btn-icon"><?php echo $is_following ? '✓' : '★'; ?></span>
                     <span class="btn-text"><?php echo $is_following ? 'Following' : 'Follow'; ?></span>
                 </button>
+
+                <?php if ($friend_status === 'accepted'): ?>
+                    <a href="/social-media-app/chat/conversation.php?id=<?php echo $profile_id; ?>" class="btn-profile-action btn-message">
+                        <span class="btn-icon">💬</span> Message
+                    </a>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </div>

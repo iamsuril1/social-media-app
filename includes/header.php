@@ -27,10 +27,16 @@ requireLogin(); // every page that includes header.php is auto-protected
         <span>SocialApp</span>
     </a>
 
+        <?php $unread_total = getUnreadMessageCount($conn, currentUserId()); ?>
     <div class="navbar-links">
         <a href="/social-media-app/index.php">Feed</a>
         <a href="/social-media-app/friends/list.php">Friends</a>
-        <a href="/social-media-app/chat/inbox.php">Chat</a>
+        <a href="/social-media-app/chat/inbox.php" class="navbar-link-with-badge">
+            Chat
+            <?php if ($unread_total > 0): ?>
+                <span class="nav-unread-badge"><?php echo $unread_total > 9 ? '9+' : $unread_total; ?></span>
+            <?php endif; ?>
+        </a>
         <a href="/social-media-app/groups/view.php">Groups</a>
         <a href="/social-media-app/profile/view.php">Profile</a>
     </div>

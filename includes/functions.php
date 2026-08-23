@@ -126,8 +126,14 @@ function feedQuerySql($placeholders) {
     ";
 }
 
-// Renders an avatar — uses the uploaded profile picture if one exists, 
-// otherwise falls back to a colored circle with the user's first initial
+function getUnreadMessageCount($conn, $user_id) {
+    $stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM messages WHERE receiver_id = ? AND is_read = 0");
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt);
+    $total = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))['total'];
+    mysqli_stmt_close($stmt);
+    return (int) $total;
+}
 function renderAvatar($name, $profile_pic, $extraClass = '') {
     if (!empty($profile_pic)) {
         $src = '/social-media-app/assets/uploads/profile/' . htmlspecialchars($profile_pic);
@@ -136,4 +142,5 @@ function renderAvatar($name, $profile_pic, $extraClass = '') {
     $initial = strtoupper(substr($name, 0, 1));
     return '<div class="avatar-initial ' . htmlspecialchars($extraClass) . '">' . $initial . '</div>';
 }
+
 ?>

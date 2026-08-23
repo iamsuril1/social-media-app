@@ -209,6 +209,19 @@
     transform: none !important;
 }
 
+/* ===== Message Button ===== */
+.btn-message {
+    background: #f0f2f5;
+    color: #333;
+}
+
+.btn-message:hover {
+    background: #2f5aff;
+    color: #fff;
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
 /* ===== Stats Row ===== */
 .profile-stats-row {
     display: flex;
