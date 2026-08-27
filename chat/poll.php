@@ -14,7 +14,6 @@ if ($friend_id <= 0 || $friend_id == $user_id) {
     exit();
 }
 
-// Enforce: only accepted friends can view each other's messages
 $friend_check = mysqli_prepare($conn, "SELECT id FROM friends 
                                         WHERE ((user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)) 
                                         AND status = 'accepted'");
@@ -24,12 +23,11 @@ mysqli_stmt_store_result($friend_check);
 
 if (mysqli_stmt_num_rows($friend_check) === 0) {
     mysqli_stmt_close($friend_check);
-    echo json_encode(['success' => false, 'messages' => []]);
+    echo json_encode(['success' => false, 'forbidden' => true, 'messages' => []]);
     exit();
 }
 mysqli_stmt_close($friend_check);
 
-// Fetch any messages newer than $after_id in this conversation
 $stmt = mysqli_prepare($conn, "SELECT id, sender_id, message, created_at
                                 FROM messages
                                 WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?))
@@ -40,7 +38,6 @@ mysqli_stmt_execute($stmt);
 $new_messages = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
 mysqli_stmt_close($stmt);
 
-// Mark any newly-fetched messages FROM the friend as read
 $mark_read_stmt = mysqli_prepare($conn, "UPDATE messages SET is_read = 1 
                                           WHERE sender_id = ? AND receiver_id = ? AND is_read = 0 AND id > ?");
 mysqli_stmt_bind_param($mark_read_stmt, "iii", $friend_id, $user_id, $after_id);

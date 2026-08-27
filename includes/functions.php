@@ -126,14 +126,6 @@ function feedQuerySql($placeholders) {
     ";
 }
 
-function getUnreadMessageCount($conn, $user_id) {
-    $stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM messages WHERE receiver_id = ? AND is_read = 0");
-    mysqli_stmt_bind_param($stmt, "i", $user_id);
-    mysqli_stmt_execute($stmt);
-    $total = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))['total'];
-    mysqli_stmt_close($stmt);
-    return (int) $total;
-}
 function renderAvatar($name, $profile_pic, $extraClass = '') {
     if (!empty($profile_pic)) {
         $src = '/social-media-app/assets/uploads/profile/' . htmlspecialchars($profile_pic);
@@ -143,4 +135,12 @@ function renderAvatar($name, $profile_pic, $extraClass = '') {
     return '<div class="avatar-initial ' . htmlspecialchars($extraClass) . '">' . $initial . '</div>';
 }
 
+function getUnreadMessageCount($conn, $user_id) {
+    $stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM messages WHERE receiver_id = ? AND is_read = 0");
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt);
+    $total = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))['total'];
+    mysqli_stmt_close($stmt);
+    return (int) $total;
+}
 ?>

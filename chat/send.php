@@ -24,7 +24,6 @@ if (strlen($message_text) > 1000) {
     exit();
 }
 
-// Enforce: only accepted friends can message each other
 $friend_check = mysqli_prepare($conn, "SELECT id FROM friends 
                                         WHERE ((user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)) 
                                         AND status = 'accepted'");
@@ -34,7 +33,7 @@ mysqli_stmt_store_result($friend_check);
 
 if (mysqli_stmt_num_rows($friend_check) === 0) {
     mysqli_stmt_close($friend_check);
-    echo json_encode(['success' => false, 'message' => 'You can only message friends.']);
+    echo json_encode(['success' => false, 'forbidden' => true, 'message' => 'You are no longer friends with this user.']);
     exit();
 }
 mysqli_stmt_close($friend_check);

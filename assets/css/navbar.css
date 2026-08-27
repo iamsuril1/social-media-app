@@ -146,33 +146,6 @@ img {
     height: 100%;
 }
 
-/* ===== Page Content Wrapper ===== */
-.page-content {
-    max-width: 700px;
-    margin: 25px auto;
-    padding: 0 15px;
-}
-
-/* ===== Responsive ===== */
-@media (max-width: 700px) {
-    .navbar {
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 12px 16px;
-    }
-
-    .navbar-links {
-        order: 3;
-        width: 100%;
-        justify-content: space-between;
-        gap: 8px;
-    }
-
-    .navbar-links a {
-        font-size: 12.5px;
-    }
-}
-
 /* ===== Navbar Unread Badge ===== */
 .navbar-link-with-badge {
     position: relative;
@@ -199,4 +172,31 @@ img {
 @keyframes badgePop {
     from { transform: scale(0); }
     to   { transform: scale(1); }
+}
+
+/* ===== Page Content Wrapper ===== */
+.page-content {
+    max-width: 700px;
+    margin: 25px auto;
+    padding: 0 15px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 700px) {
+    .navbar {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 16px;
+    }
+
+    .navbar-links {
+        order: 3;
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .navbar-links a {
+        font-size: 12.5px;
+    }
 }

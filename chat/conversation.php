@@ -11,7 +11,6 @@ if ($friend_id <= 0 || $friend_id == $user_id) {
     redirect('/social-media-app/chat/inbox.php');
 }
 
-// Enforce: only accepted friends can chat with each other
 $friend_check = mysqli_prepare($conn, "SELECT id FROM friends 
                                         WHERE ((user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)) 
                                         AND status = 'accepted'");
@@ -26,7 +25,6 @@ if (mysqli_stmt_num_rows($friend_check) === 0) {
 }
 mysqli_stmt_close($friend_check);
 
-// Fetch friend's info
 $friend_stmt = mysqli_prepare($conn, "SELECT id, name, profile_pic FROM users WHERE id = ?");
 mysqli_stmt_bind_param($friend_stmt, "i", $friend_id);
 mysqli_stmt_execute($friend_stmt);
@@ -38,13 +36,11 @@ if (!$friend) {
     redirect('/social-media-app/chat/inbox.php');
 }
 
-// Mark all messages FROM this friend TO me as read (initial page load)
 $mark_read_stmt = mysqli_prepare($conn, "UPDATE messages SET is_read = 1 WHERE sender_id = ? AND receiver_id = ? AND is_read = 0");
 mysqli_stmt_bind_param($mark_read_stmt, "ii", $friend_id, $user_id);
 mysqli_stmt_execute($mark_read_stmt);
 mysqli_stmt_close($mark_read_stmt);
 
-// Fetch the full conversation
 $messages_stmt = mysqli_prepare($conn, "SELECT id, sender_id, message, created_at
                                          FROM messages
                                          WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)
@@ -102,11 +98,9 @@ const form = document.getElementById('chatForm');
 const input = document.getElementById('messageInput');
 const sendBtn = document.getElementById('sendBtn');
 
-// Scroll to bottom on load
 chatBox.scrollTop = chatBox.scrollHeight;
 
 function appendMessage(text, isMine, time) {
-    // Remove the "no messages yet" placeholder if it's still showing
     const emptyState = document.getElementById('emptyState');
     if (emptyState) emptyState.remove();
 
@@ -128,8 +122,28 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+let pollTimer = null;
+let conversationEnded = false;
+
+function lockConversation(message) {
+    conversationEnded = true;
+    if (pollTimer) clearInterval(pollTimer);
+
+    input.disabled = true;
+    sendBtn.disabled = true;
+    input.placeholder = message;
+
+    const notice = document.createElement('div');
+    notice.className = 'chat-ended-notice';
+    notice.textContent = message;
+    chatBox.appendChild(notice);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
 form.addEventListener('submit', function(e) {
     e.preventDefault();
+    if (conversationEnded) return;
+
     const text = input.value.trim();
     if (text === '') return;
 
@@ -146,22 +160,30 @@ form.addEventListener('submit', function(e) {
             appendMessage(data.message, true, data.time);
             lastMessageId = data.message_id;
             input.value = '';
+            sendBtn.disabled = false;
+            input.focus();
+        } else if (data.forbidden) {
+            lockConversation(data.message);
         } else {
             alert(data.message || 'Could not send message.');
+            sendBtn.disabled = false;
         }
-        sendBtn.disabled = false;
-        input.focus();
     })
     .catch(() => {
         sendBtn.disabled = false;
     });
 });
 
-// Poll for new incoming messages every 3 seconds
 function pollMessages() {
+    if (conversationEnded) return;
+
     fetch('/social-media-app/chat/poll.php?friend_id=' + friendId + '&after_id=' + lastMessageId)
         .then(r => r.json())
         .then(data => {
+            if (data.forbidden) {
+                lockConversation('You are no longer friends with this user.');
+                return;
+            }
             if (data.success && data.messages.length > 0) {
                 data.messages.forEach(msg => {
                     appendMessage(msg.message, msg.is_mine, msg.time);
@@ -172,7 +194,7 @@ function pollMessages() {
         .catch(() => {});
 }
 
-setInterval(pollMessages, 3000);
+pollTimer = setInterval(pollMessages, 3000);
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
