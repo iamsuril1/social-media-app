@@ -13,7 +13,6 @@ if ($group_id <= 0) {
     exit();
 }
 
-// Confirm group exists
 $check_group = mysqli_prepare($conn, "SELECT id FROM `groups` WHERE id = ?");
 mysqli_stmt_bind_param($check_group, "i", $group_id);
 mysqli_stmt_execute($check_group);
@@ -26,7 +25,6 @@ if (mysqli_stmt_num_rows($check_group) === 0) {
 }
 mysqli_stmt_close($check_group);
 
-// Check if already a member
 $check_member = mysqli_prepare($conn, "SELECT id FROM group_members WHERE group_id = ? AND user_id = ?");
 mysqli_stmt_bind_param($check_member, "ii", $group_id, $user_id);
 mysqli_stmt_execute($check_member);

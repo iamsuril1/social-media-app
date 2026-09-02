@@ -13,7 +13,7 @@ if ($target_id <= 0 || $target_id == $user_id) {
     exit();
 }
 
-=$check_user = mysqli_prepare($conn, "SELECT id FROM users WHERE id = ?");
+$check_user = mysqli_prepare($conn, "SELECT id FROM users WHERE id = ?");
 mysqli_stmt_bind_param($check_user, "i", $target_id);
 mysqli_stmt_execute($check_user);
 mysqli_stmt_store_result($check_user);
@@ -25,7 +25,7 @@ if (mysqli_stmt_num_rows($check_user) === 0) {
 }
 mysqli_stmt_close($check_user);
 
-=$stmt = mysqli_prepare($conn, "SELECT id FROM follows WHERE follower_id = ? AND following_id = ?");
+$stmt = mysqli_prepare($conn, "SELECT id FROM follows WHERE follower_id = ? AND following_id = ?");
 mysqli_stmt_bind_param($stmt, "ii", $user_id, $target_id);
 mysqli_stmt_execute($stmt);
 mysqli_stmt_store_result($stmt);
