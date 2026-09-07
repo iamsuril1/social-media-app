@@ -48,6 +48,14 @@ if ($already_liked) {
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     $liked = true;
+
+    // Notify the post owner
+    $owner_stmt = mysqli_prepare($conn, "SELECT user_id FROM posts WHERE id = ?");
+    mysqli_stmt_bind_param($owner_stmt, "i", $post_id);
+    mysqli_stmt_execute($owner_stmt);
+    $post_owner = mysqli_fetch_assoc(mysqli_stmt_get_result($owner_stmt))['user_id'];
+    mysqli_stmt_close($owner_stmt);
+    createNotification($conn, $post_owner, $user_id, 'like', $post_id);
 }
 
 // Get the updated total like count for this post

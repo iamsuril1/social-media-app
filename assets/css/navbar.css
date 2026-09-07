@@ -146,6 +146,15 @@ img {
     height: 100%;
 }
 
+/* ===== Navbar Notification Bell ===== */
+.navbar-bell-link {
+    position: relative;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px;
+}
+
 /* ===== Navbar Unread Badge ===== */
 .navbar-link-with-badge {
     position: relative;

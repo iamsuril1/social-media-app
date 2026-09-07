@@ -50,6 +50,18 @@ if (!mysqli_stmt_execute($stmt)) {
 $comment_id = mysqli_insert_id($conn);
 mysqli_stmt_close($stmt);
 
+// Notify the post owner (skip if commenting on your own post — handled inside createNotification)
+$owner_stmt = mysqli_prepare($conn, "SELECT user_id FROM posts WHERE id = ?");
+mysqli_stmt_bind_param($owner_stmt, "i", $post_id);
+mysqli_stmt_execute($owner_stmt);
+$owner_row = mysqli_fetch_assoc(mysqli_stmt_get_result($owner_stmt));
+mysqli_stmt_close($owner_stmt);
+
+if ($owner_row) {
+    $post_owner = $owner_row['user_id'];
+    createNotification($conn, $post_owner, $user_id, 'comment', $post_id);
+}
+
 // Get the commenter's name for the response
 $user_stmt = mysqli_prepare($conn, "SELECT name FROM users WHERE id = ?");
 mysqli_stmt_bind_param($user_stmt, "i", $user_id);
@@ -58,6 +70,7 @@ $user_result = mysqli_stmt_get_result($user_stmt);
 $user_name = mysqli_fetch_assoc($user_result)['name'];
 mysqli_stmt_close($user_stmt);
 
+// Get updated total comment count for this post
 $count_stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM comments WHERE post_id = ?");
 mysqli_stmt_bind_param($count_stmt, "i", $post_id);
 mysqli_stmt_execute($count_stmt);

@@ -43,6 +43,7 @@ mysqli_stmt_bind_param($stmt, "ii", $user_id, $target_id);
 
 if (mysqli_stmt_execute($stmt)) {
     setFlash("Friend request sent!");
+    createNotification($conn, $target_id, $user_id, 'friend_request');
 } else {
     setFlash("Something went wrong. Please try again.");
 }

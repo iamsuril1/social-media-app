@@ -31,6 +31,7 @@ if ($action === 'accept') {
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     setFlash("Friend request accepted!");
+    createNotification($conn, $sender_id, $user_id, 'friend_accept');
 } else {
     $stmt = mysqli_prepare($conn, "DELETE FROM friends WHERE user_id = ? AND friend_id = ? AND status = 'pending'");
     mysqli_stmt_bind_param($stmt, "ii", $sender_id, $user_id);

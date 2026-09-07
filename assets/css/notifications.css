@@ -1,0 +1,126 @@
+/* ===== Notifications Card ===== */
+.notif-card {
+    background: #fff;
+    padding: 22px 24px;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    opacity: 0;
+    animation: slideFadeIn 0.4s ease-out forwards;
+}
+
+@keyframes slideFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.notif-card h2 {
+    font-size: 20px;
+    color: #1c1e21;
+    margin-bottom: 8px;
+}
+
+.notif-card .accent-bar {
+    width: 42px;
+    height: 4px;
+    background: #2f5aff;
+    border-radius: 4px;
+    margin-bottom: 16px;
+}
+
+.notif-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #8a8d91;
+}
+
+.notif-empty-state p {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 6px;
+}
+
+.placeholder-subtext {
+    font-size: 13px;
+    color: #8a8d91;
+}
+
+/* ===== Notification Row ===== */
+.notif-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.notif-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 10px;
+    border-radius: 12px;
+    transition: background 0.15s ease;
+    color: inherit;
+}
+
+.notif-row:hover {
+    background: #f7f8fb;
+    text-decoration: none;
+}
+
+.notif-row.unread {
+    background: #f0f5ff;
+}
+
+.notif-row.unread:hover {
+    background: #e6eeff;
+}
+
+.notif-avatar {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 50%;
+    overflow: hidden;
+    font-size: 16px;
+}
+
+.notif-avatar-img {
+    width: 100%;
+    height: 100%;
+}
+
+.notif-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.notif-text {
+    font-size: 14px;
+    color: #1c1e21;
+    font-weight: 500;
+}
+
+.notif-row.unread .notif-text {
+    font-weight: 700;
+}
+
+.notif-time {
+    font-size: 12px;
+    color: #8a8d91;
+}
+
+.notif-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #2f5aff;
+    flex-shrink: 0;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+    .notif-card {
+        padding: 16px 18px;
+    }
+}

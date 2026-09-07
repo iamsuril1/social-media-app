@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/functions.php';
-requireLogin(); 
+requireLogin(); // every page that includes header.php is auto-protected
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,7 +41,14 @@ requireLogin();
         <a href="/social-media-app/profile/view.php">Profile</a>
     </div>
 
+    <?php $unread_notif = getUnreadNotificationCount($conn, currentUserId()); ?>
     <div class="navbar-user">
+        <a href="/social-media-app/notifications/list.php" class="navbar-bell-link" title="Notifications">
+            🔔
+            <?php if ($unread_notif > 0): ?>
+                <span class="nav-unread-badge"><?php echo $unread_notif > 9 ? '9+' : $unread_notif; ?></span>
+            <?php endif; ?>
+        </a>
         <a href="/social-media-app/profile/view.php" class="navbar-avatar-link">
             <?php echo renderAvatar($_SESSION['user_name'], $_SESSION['profile_pic'] ?? null, 'navbar-avatar'); ?>
         </a>

@@ -13,6 +13,7 @@ if ($target_id <= 0 || $target_id == $user_id) {
     exit();
 }
 
+// Confirm target user exists
 $check_user = mysqli_prepare($conn, "SELECT id FROM users WHERE id = ?");
 mysqli_stmt_bind_param($check_user, "i", $target_id);
 mysqli_stmt_execute($check_user);
@@ -25,6 +26,7 @@ if (mysqli_stmt_num_rows($check_user) === 0) {
 }
 mysqli_stmt_close($check_user);
 
+// Check if already following
 $stmt = mysqli_prepare($conn, "SELECT id FROM follows WHERE follower_id = ? AND following_id = ?");
 mysqli_stmt_bind_param($stmt, "ii", $user_id, $target_id);
 mysqli_stmt_execute($stmt);
@@ -44,8 +46,11 @@ if ($already_following) {
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     $following = true;
+
+    createNotification($conn, $target_id, $user_id, 'follow');
 }
 
+// Updated follower count for the target user
 $count_stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM follows WHERE following_id = ?");
 mysqli_stmt_bind_param($count_stmt, "i", $target_id);
 mysqli_stmt_execute($count_stmt);
