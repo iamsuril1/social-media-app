@@ -13,7 +13,6 @@ if ($group_id <= 0) {
     exit();
 }
 
-// Confirm membership
 $check_member = mysqli_prepare($conn, "SELECT role FROM group_members WHERE group_id = ? AND user_id = ?");
 mysqli_stmt_bind_param($check_member, "ii", $group_id, $user_id);
 mysqli_stmt_execute($check_member);
@@ -25,7 +24,6 @@ if (!$member) {
     exit();
 }
 
-// If this user is the admin, check if there are other members to hand admin to
 if ($member['role'] === 'admin') {
     $others_stmt = mysqli_prepare($conn, "SELECT id FROM group_members WHERE group_id = ? AND user_id != ? ORDER BY joined_at ASC LIMIT 1");
     mysqli_stmt_bind_param($others_stmt, "ii", $group_id, $user_id);
@@ -34,25 +32,21 @@ if ($member['role'] === 'admin') {
     mysqli_stmt_close($others_stmt);
 
     if ($next_member) {
-        // Promote the longest-standing remaining member to admin
         $promote_stmt = mysqli_prepare($conn, "UPDATE group_members SET role = 'admin' WHERE id = ?");
         mysqli_stmt_bind_param($promote_stmt, "i", $next_member['id']);
         mysqli_stmt_execute($promote_stmt);
         mysqli_stmt_close($promote_stmt);
     } else {
-        // No other members — delete the group entirely
         $delete_group_stmt = mysqli_prepare($conn, "DELETE FROM `groups` WHERE id = ?");
         mysqli_stmt_bind_param($delete_group_stmt, "i", $group_id);
         mysqli_stmt_execute($delete_group_stmt);
         mysqli_stmt_close($delete_group_stmt);
-        // group_members row cascades automatically since group_id has ON DELETE CASCADE
 
         echo json_encode(['success' => true, 'group_deleted' => true]);
         exit();
     }
 }
 
-// Remove this user from the group
 $stmt = mysqli_prepare($conn, "DELETE FROM group_members WHERE group_id = ? AND user_id = ?");
 mysqli_stmt_bind_param($stmt, "ii", $group_id, $user_id);
 

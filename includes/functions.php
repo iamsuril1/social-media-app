@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Clean user input to prevent XSS/HTML injection
 function sanitize($data) {
     global $conn;
     $data = trim($data);
@@ -10,12 +9,10 @@ function sanitize($data) {
     return $data;
 }
 
-// Check if a user is currently logged in
 function isLoggedIn() {
     return isset($_SESSION['user_id']);
 }
 
-// Force login before accessing a page
 function requireLogin() {
     if (!isLoggedIn()) {
         header("Location: /social-media-app/auth/login.php");
@@ -23,18 +20,15 @@ function requireLogin() {
     }
 }
 
-// Get the currently logged-in user's ID
 function currentUserId() {
     return $_SESSION['user_id'] ?? null;
 }
 
-// Simple redirect helper
 function redirect($path) {
     header("Location: " . $path);
     exit();
 }
 
-// Show a flash message once, then clear it
 function setFlash($message) {
     $_SESSION['flash'] = $message;
 }
@@ -48,7 +42,6 @@ function getFlash() {
     return null;
 }
 
-// Convert a MySQL datetime into a human-friendly "time ago" string
 function timeAgo($datetime) {
     $timestamp = strtotime($datetime);
     $diff = time() - $timestamp;
@@ -69,12 +62,9 @@ function timeAgo($datetime) {
     }
 }
 
-// Returns an array of user IDs whose posts should appear in the current user's feed:
-// themselves, their accepted friends, and everyone they follow
 function getVisibleUserIds($conn, $user_id) {
     $ids = [(int) $user_id];
 
-    // Friends (accepted, either direction)
     $stmt = mysqli_prepare($conn, "SELECT IF(user_id = ?, friend_id, user_id) AS friend_uid 
                                     FROM friends 
                                     WHERE (user_id = ? OR friend_id = ?) AND status = 'accepted'");
@@ -86,7 +76,6 @@ function getVisibleUserIds($conn, $user_id) {
     }
     mysqli_stmt_close($stmt);
 
-    // People this user follows
     $stmt = mysqli_prepare($conn, "SELECT following_id FROM follows WHERE follower_id = ?");
     mysqli_stmt_bind_param($stmt, "i", $user_id);
     mysqli_stmt_execute($stmt);
@@ -99,8 +88,7 @@ function getVisibleUserIds($conn, $user_id) {
     return array_values(array_unique($ids));
 }
 
-// Builds the feed SQL: original posts authored by, or shared by, anyone in $placeholders.
-// Same set of ids is bound twice (once per subquery) by the caller.
+
 function feedQuerySql($placeholders) {
     return "
         (SELECT posts.id AS post_id, posts.content, posts.image, posts.created_at AS post_created_at,
@@ -126,8 +114,6 @@ function feedQuerySql($placeholders) {
     ";
 }
 
-// Renders an avatar — uses the uploaded profile picture if one exists, 
-// otherwise falls back to a colored circle with the user's first initial
 function renderAvatar($name, $profile_pic, $extraClass = '') {
     if (!empty($profile_pic)) {
         $src = '/social-media-app/assets/uploads/profile/' . htmlspecialchars($profile_pic);
@@ -137,7 +123,6 @@ function renderAvatar($name, $profile_pic, $extraClass = '') {
     return '<div class="avatar-initial ' . htmlspecialchars($extraClass) . '">' . $initial . '</div>';
 }
 
-// Total unread messages across all conversations for this user
 function getUnreadMessageCount($conn, $user_id) {
     $stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM messages WHERE receiver_id = ? AND is_read = 0");
     mysqli_stmt_bind_param($stmt, "i", $user_id);
@@ -147,10 +132,9 @@ function getUnreadMessageCount($conn, $user_id) {
     return (int) $total;
 }
 
-// Creates a notification, but never notifies someone about their own action
 function createNotification($conn, $user_id, $actor_id, $type, $reference_id = null) {
     if ($user_id == $actor_id) {
-        return; // don't notify yourself
+        return; 
     }
     $stmt = mysqli_prepare($conn, "INSERT INTO notifications (user_id, actor_id, type, reference_id) VALUES (?, ?, ?, ?)");
     mysqli_stmt_bind_param($stmt, "iisi", $user_id, $actor_id, $type, $reference_id);
@@ -158,7 +142,6 @@ function createNotification($conn, $user_id, $actor_id, $type, $reference_id = n
     mysqli_stmt_close($stmt);
 }
 
-// Total unread notifications for the navbar badge
 function getUnreadNotificationCount($conn, $user_id) {
     $stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM notifications WHERE user_id = ? AND is_read = 0");
     mysqli_stmt_bind_param($stmt, "i", $user_id);
@@ -168,7 +151,6 @@ function getUnreadNotificationCount($conn, $user_id) {
     return (int) $total;
 }
 
-// Human-readable text + link for a notification, based on its type
 function formatNotification($notif) {
     $name = htmlspecialchars($notif['actor_name']);
 

@@ -18,7 +18,6 @@ if (!$profile_name_row) {
 }
 $profile_name = $profile_name_row['name'];
 
-// Everyone this profile follows
 $stmt = mysqli_prepare($conn, "SELECT users.id, users.name
                                 FROM follows
                                 JOIN users ON follows.following_id = users.id

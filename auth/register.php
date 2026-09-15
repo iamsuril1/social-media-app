@@ -69,7 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="auth-split">
 
-        <!-- Left decorative panel -->
         <div class="auth-illustration">
             <div class="blob blob-1"></div>
             <div class="blob blob-2"></div>
@@ -86,7 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
 
-        <!-- Right form panel -->
         <div class="auth-form-panel">
             <h2>Registration</h2>
             <div class="auth-accent-bar"></div>

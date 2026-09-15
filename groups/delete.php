@@ -11,7 +11,6 @@ if ($group_id <= 0) {
     redirect('/social-media-app/groups/view.php');
 }
 
-// Confirm the requester is the admin of this group
 $admin_check = mysqli_prepare($conn, "SELECT role FROM group_members WHERE group_id = ? AND user_id = ?");
 mysqli_stmt_bind_param($admin_check, "ii", $group_id, $user_id);
 mysqli_stmt_execute($admin_check);
@@ -23,7 +22,6 @@ if (!$member || $member['role'] !== 'admin') {
     redirect('/social-media-app/groups/single.php?id=' . $group_id);
 }
 
-// Clean up uploaded images from posts belonging to this group before deleting
 $posts_stmt = mysqli_prepare($conn, "SELECT image FROM posts WHERE group_id = ? AND image IS NOT NULL");
 mysqli_stmt_bind_param($posts_stmt, "i", $group_id);
 mysqli_stmt_execute($posts_stmt);
@@ -37,7 +35,6 @@ foreach ($group_post_images as $post) {
     }
 }
 
-// Delete the group — group_members and posts (group_id FK) cascade automatically
 $stmt = mysqli_prepare($conn, "DELETE FROM `groups` WHERE id = ? AND created_by = ?");
 mysqli_stmt_bind_param($stmt, "ii", $group_id, $user_id);
 

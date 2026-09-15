@@ -13,7 +13,6 @@ if ($post_id <= 0) {
     exit();
 }
 
-// Confirm the post actually exists
 $check_post = mysqli_prepare($conn, "SELECT id FROM posts WHERE id = ?");
 mysqli_stmt_bind_param($check_post, "i", $post_id);
 mysqli_stmt_execute($check_post);
@@ -26,7 +25,6 @@ if (mysqli_stmt_num_rows($check_post) === 0) {
 }
 mysqli_stmt_close($check_post);
 
-// Check if this user already liked this post
 $stmt = mysqli_prepare($conn, "SELECT id FROM likes WHERE post_id = ? AND user_id = ?");
 mysqli_stmt_bind_param($stmt, "ii", $post_id, $user_id);
 mysqli_stmt_execute($stmt);
@@ -35,21 +33,18 @@ $already_liked = mysqli_stmt_num_rows($stmt) > 0;
 mysqli_stmt_close($stmt);
 
 if ($already_liked) {
-    // Unlike — remove the row
     $stmt = mysqli_prepare($conn, "DELETE FROM likes WHERE post_id = ? AND user_id = ?");
     mysqli_stmt_bind_param($stmt, "ii", $post_id, $user_id);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     $liked = false;
 } else {
-    // Like — insert a new row
     $stmt = mysqli_prepare($conn, "INSERT INTO likes (post_id, user_id) VALUES (?, ?)");
     mysqli_stmt_bind_param($stmt, "ii", $post_id, $user_id);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     $liked = true;
 
-    // Notify the post owner
     $owner_stmt = mysqli_prepare($conn, "SELECT user_id FROM posts WHERE id = ?");
     mysqli_stmt_bind_param($owner_stmt, "i", $post_id);
     mysqli_stmt_execute($owner_stmt);
@@ -58,7 +53,6 @@ if ($already_liked) {
     createNotification($conn, $post_owner, $user_id, 'like', $post_id);
 }
 
-// Get the updated total like count for this post
 $count_stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM likes WHERE post_id = ?");
 mysqli_stmt_bind_param($count_stmt, "i", $post_id);
 mysqli_stmt_execute($count_stmt);

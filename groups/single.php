@@ -13,7 +13,6 @@ if ($group_id <= 0) {
     redirect('/social-media-app/groups/view.php');
 }
 
-// Fetch group info
 $group_stmt = mysqli_prepare($conn, "SELECT id, name, description, created_by, created_at FROM `groups` WHERE id = ?");
 mysqli_stmt_bind_param($group_stmt, "i", $group_id);
 mysqli_stmt_execute($group_stmt);
@@ -25,7 +24,6 @@ if (!$group) {
     redirect('/social-media-app/groups/view.php');
 }
 
-// Am I a member? What's my role?
 $member_stmt = mysqli_prepare($conn, "SELECT role FROM group_members WHERE group_id = ? AND user_id = ?");
 mysqli_stmt_bind_param($member_stmt, "ii", $group_id, $user_id);
 mysqli_stmt_execute($member_stmt);
@@ -35,7 +33,6 @@ mysqli_stmt_close($member_stmt);
 $is_member = (bool) $member_row;
 $is_admin = $is_member && $member_row['role'] === 'admin';
 
-// Member list
 $members_stmt = mysqli_prepare($conn, "SELECT users.id, users.name, users.profile_pic, group_members.role
                                         FROM group_members
                                         JOIN users ON group_members.user_id = users.id

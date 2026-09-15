@@ -13,7 +13,6 @@ if ($post_id <= 0) {
     exit();
 }
 
-// Confirm the post exists
 $check_post = mysqli_prepare($conn, "SELECT id FROM posts WHERE id = ?");
 mysqli_stmt_bind_param($check_post, "i", $post_id);
 mysqli_stmt_execute($check_post);
@@ -26,7 +25,6 @@ if (mysqli_stmt_num_rows($check_post) === 0) {
 }
 mysqli_stmt_close($check_post);
 
-// Check if this user already shared this post
 $stmt = mysqli_prepare($conn, "SELECT id FROM shares WHERE post_id = ? AND user_id = ?");
 mysqli_stmt_bind_param($stmt, "ii", $post_id, $user_id);
 mysqli_stmt_execute($stmt);
@@ -35,21 +33,18 @@ $already_shared = mysqli_stmt_num_rows($stmt) > 0;
 mysqli_stmt_close($stmt);
 
 if ($already_shared) {
-    // Unshare
     $stmt = mysqli_prepare($conn, "DELETE FROM shares WHERE post_id = ? AND user_id = ?");
     mysqli_stmt_bind_param($stmt, "ii", $post_id, $user_id);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     $shared = false;
 } else {
-    // Share — insert a new row
     $stmt = mysqli_prepare($conn, "INSERT INTO shares (post_id, user_id) VALUES (?, ?)");
     mysqli_stmt_bind_param($stmt, "ii", $post_id, $user_id);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
     $shared = true;
 
-    // Notify the post owner
     $owner_stmt = mysqli_prepare($conn, "SELECT user_id FROM posts WHERE id = ?");
     mysqli_stmt_bind_param($owner_stmt, "i", $post_id);
     mysqli_stmt_execute($owner_stmt);
@@ -58,7 +53,6 @@ if ($already_shared) {
     createNotification($conn, $post_owner, $user_id, 'share', $post_id);
 }
 
-// Updated total share count for this post
 $count_stmt = mysqli_prepare($conn, "SELECT COUNT(*) AS total FROM shares WHERE post_id = ?");
 mysqli_stmt_bind_param($count_stmt, "i", $post_id);
 mysqli_stmt_execute($count_stmt);

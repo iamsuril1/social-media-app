@@ -1,5 +1,4 @@
 <?php
-// This file expects $conn to already be available (included after db.php)
 
 $current_user_id = currentUserId();
 $per_page = 5;

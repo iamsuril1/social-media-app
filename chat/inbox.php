@@ -5,7 +5,6 @@ require_once __DIR__ . '/../includes/header.php';
 
 $user_id = currentUserId();
 
-// All accepted friends (only friends can be chatted with)
 $friends_stmt = mysqli_prepare($conn, "SELECT users.id, users.name, users.profile_pic
                                         FROM friends
                                         JOIN users ON users.id = IF(friends.user_id = ?, friends.friend_id, friends.user_id)
@@ -15,7 +14,6 @@ mysqli_stmt_execute($friends_stmt);
 $friends = mysqli_fetch_all(mysqli_stmt_get_result($friends_stmt), MYSQLI_ASSOC);
 mysqli_stmt_close($friends_stmt);
 
-// For each friend, get the last message + unread count
 $conversations = [];
 foreach ($friends as $friend) {
     $friend_id = $friend['id'];
@@ -47,7 +45,6 @@ foreach ($friends as $friend) {
     ];
 }
 
-// Sort: conversations with messages first (most recent first), then friends with no messages yet
 usort($conversations, function($a, $b) {
     if ($a['last_time'] === null && $b['last_time'] === null) return 0;
     if ($a['last_time'] === null) return 1;

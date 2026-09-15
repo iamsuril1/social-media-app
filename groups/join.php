@@ -13,7 +13,8 @@ if ($group_id <= 0) {
     exit();
 }
 
-$check_group = mysqli_prepare($conn, "SELECT id FROM `groups` WHERE id = ?");
+$check_group = mysqli_prepare($conn, "SELECT id FROM `groups` WHERE id = ?"); 
+
 mysqli_stmt_bind_param($check_group, "i", $group_id);
 mysqli_stmt_execute($check_group);
 mysqli_stmt_store_result($check_group);

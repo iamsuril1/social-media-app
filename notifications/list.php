@@ -5,7 +5,6 @@ require_once __DIR__ . '/../includes/header.php';
 
 $user_id = currentUserId();
 
-// Mark everything as read the moment this page is viewed
 $mark_stmt = mysqli_prepare($conn, "UPDATE notifications SET is_read = 1 WHERE user_id = ? AND is_read = 0");
 mysqli_stmt_bind_param($mark_stmt, "i", $user_id);
 mysqli_stmt_execute($mark_stmt);

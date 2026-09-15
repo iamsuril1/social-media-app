@@ -6,7 +6,6 @@ require_once __DIR__ . '/../includes/header.php';
 $user_id = currentUserId();
 $errors = [];
 
-// Fetch current data
 $stmt = mysqli_prepare($conn, "SELECT name, bio, profile_pic FROM users WHERE id = ?");
 mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
@@ -17,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = sanitize($_POST['name']);
     $bio = sanitize($_POST['bio']);
     $remove_pic = isset($_POST['remove_pic']);
-    $profile_pic = $user['profile_pic']; // keep existing by default
+    $profile_pic = $user['profile_pic']; 
 
     if (empty($name)) {
         $errors[] = "Name cannot be empty.";
@@ -31,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Bio must be under 300 characters.";
     }
 
-    // Remove existing picture if requested
     if ($remove_pic && !empty($user['profile_pic'])) {
         $old_path = __DIR__ . '/../assets/uploads/profile/' . $user['profile_pic'];
         if (file_exists($old_path)) {
@@ -40,10 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $profile_pic = null;
     }
 
-    // Handle new picture upload
     if (!empty($_FILES['profile_pic']['name'])) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        $max_size = 3 * 1024 * 1024; // 3MB
+        $max_size = 3 * 1024 * 1024; 
 
         $file_type = $_FILES['profile_pic']['type'];
         $file_size = $_FILES['profile_pic']['size'];
@@ -56,9 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = "Only JPG, PNG, GIF, or WEBP images are allowed.";
         } elseif ($file_size > $max_size) {
             $errors[] = "Image must be smaller than 3MB.";
-        } else {
-            // Delete the old picture before saving the new one
-            if (!empty($user['profile_pic'])) {
+        } else {            if (!empty($user['profile_pic'])) {
                 $old_path = __DIR__ . '/../assets/uploads/profile/' . $user['profile_pic'];
                 if (file_exists($old_path)) {
                     unlink($old_path);

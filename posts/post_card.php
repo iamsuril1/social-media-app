@@ -1,5 +1,4 @@
 <?php
-// Expects: $row (one feed row), $current_user_id, $conn, and optionally $delay
 $delay = $delay ?? 0;
 
 $post_id = $row['post_id'];

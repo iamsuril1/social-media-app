@@ -11,7 +11,6 @@ if ($post_id <= 0) {
     redirect('/social-media-app/index.php');
 }
 
-// Fetch the post first to check ownership and get the image filename
 $stmt = mysqli_prepare($conn, "SELECT user_id, image FROM posts WHERE id = ?");
 mysqli_stmt_bind_param($stmt, "i", $post_id);
 mysqli_stmt_execute($stmt);

@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Post is too long (max 2000 characters).";
     }
 
-    // Handle image upload if one was provided
     if (!empty($_FILES['image']['name'])) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $max_size = 5 * 1024 * 1024; // 5MB

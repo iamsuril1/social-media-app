@@ -6,7 +6,6 @@ require_once __DIR__ . '/../includes/header.php';
 $user_id = currentUserId();
 $flash = getFlash();
 
-// Groups I'm a member of
 $my_groups_stmt = mysqli_prepare($conn, "SELECT g.id, g.name, g.description, g.created_by,
                                                  (SELECT COUNT(*) FROM group_members WHERE group_id = g.id) AS member_count
                                           FROM `groups` g
@@ -20,7 +19,6 @@ mysqli_stmt_close($my_groups_stmt);
 
 $my_group_ids = array_column($my_groups, 'id');
 
-// Discover — groups I haven't joined
 if (!empty($my_group_ids)) {
     $placeholders = implode(',', array_fill(0, count($my_group_ids), '?'));
     $types = str_repeat('i', count($my_group_ids));

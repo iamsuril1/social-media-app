@@ -538,7 +538,6 @@
     text-align: center;
 }
 
-/* ===== Responsive ===== */
 @media (max-width: 600px) {
     .group-info-row {
         flex-direction: column;

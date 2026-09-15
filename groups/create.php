@@ -30,7 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $group_id = mysqli_insert_id($conn);
             mysqli_stmt_close($stmt);
 
-            // Automatically add the creator as an admin member
             $member_stmt = mysqli_prepare($conn, "INSERT INTO group_members (group_id, user_id, role) VALUES (?, ?, 'admin')");
             mysqli_stmt_bind_param($member_stmt, "ii", $group_id, $user_id);
             mysqli_stmt_execute($member_stmt);

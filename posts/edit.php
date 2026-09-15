@@ -31,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Bio must be under 300 characters.";
     }
 
-    // Remove existing picture if requested
     if ($remove_pic && !empty($user['profile_pic'])) {
         $old_path = __DIR__ . '/../assets/uploads/profile/' . $user['profile_pic'];
         if (file_exists($old_path)) {
@@ -40,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $profile_pic = null;
     }
 
-    // Handle new picture upload
     if (!empty($_FILES['profile_pic']['name'])) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $max_size = 3 * 1024 * 1024; // 3MB
@@ -57,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($file_size > $max_size) {
             $errors[] = "Image must be smaller than 3MB.";
         } else {
-            // Delete the old picture before saving the new one
             if (!empty($user['profile_pic'])) {
                 $old_path = __DIR__ . '/../assets/uploads/profile/' . $user['profile_pic'];
                 if (file_exists($old_path)) {
