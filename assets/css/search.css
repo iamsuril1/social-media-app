@@ -1,0 +1,129 @@
+/* ===== Search Card ===== */
+.search-card {
+    background: #fff;
+    padding: 22px 24px;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    opacity: 0;
+    animation: slideFadeIn 0.4s ease-out forwards;
+}
+
+@keyframes slideFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.search-card h2 {
+    font-size: 20px;
+    color: #1c1e21;
+    margin-bottom: 8px;
+}
+
+.search-card .accent-bar {
+    width: 42px;
+    height: 4px;
+    background: #2f5aff;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-form input[type="text"] {
+    flex: 1;
+    padding: 11px 16px;
+    border: 1.5px solid #e3e6ec;
+    border-radius: 24px;
+    font-size: 14px;
+    background: #f7f8fb;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.search-form input[type="text"]:focus {
+    outline: none;
+    border-color: #2f5aff;
+    background: #fff;
+}
+
+.btn-search {
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #2f5aff, #6a3df2);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    font-size: 13.5px;
+    font-weight: 700;
+    transition: transform 0.15s ease;
+}
+
+.btn-search:hover {
+    transform: translateY(-1px);
+}
+
+.empty-text {
+    color: #8a8d91;
+    font-size: 13.5px;
+    text-align: center;
+    padding: 20px 0;
+}
+
+/* ===== Search Results ===== */
+.search-results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.search-result-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 10px;
+    border-radius: 12px;
+    transition: background 0.15s ease;
+    color: inherit;
+}
+
+.search-result-row:hover {
+    background: #f7f8fb;
+    text-decoration: none;
+}
+
+.search-result-avatar {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    border-radius: 50%;
+    overflow: hidden;
+    font-size: 17px;
+}
+
+.search-avatar-img {
+    width: 100%;
+    height: 100%;
+}
+
+.search-result-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.search-result-name {
+    font-weight: 700;
+    font-size: 14.5px;
+    color: #1c1e21;
+}
+
+.search-result-bio {
+    font-size: 12.5px;
+    color: #8a8d91;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

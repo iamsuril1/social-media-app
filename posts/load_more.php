@@ -15,8 +15,12 @@ $types = str_repeat('i', count($visible_ids));
 
 $sql = feedQuerySql($placeholders);
 $limit_plus_one = $per_page + 1;
-$all_types = $types . $types . "ii";
-$all_params = array_merge($visible_ids, $visible_ids, [$limit_plus_one, $offset]);
+$all_types = $types . "iii" . $types . "iii" . "ii";
+$all_params = array_merge(
+    $visible_ids, [$current_user_id, $current_user_id, $current_user_id],
+    $visible_ids, [$current_user_id, $current_user_id, $current_user_id],
+    [$limit_plus_one, $offset]
+);
 
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, $all_types, ...$all_params);

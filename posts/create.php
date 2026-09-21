@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Post is too long (max 2000 characters).";
     }
 
+    // Handle image upload if one was provided
     if (!empty($_FILES['image']['name'])) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $max_size = 5 * 1024 * 1024; // 5MB
@@ -35,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($file_size > $max_size) {
             $errors[] = "Image must be smaller than 5MB.";
         } else {
-            // Build a safe, unique filename
             $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
             $image_name = "post_" . $user_id . "_" . time() . "_" . uniqid() . "." . $ext;
             $upload_path = __DIR__ . '/../assets/uploads/posts/' . $image_name;
@@ -47,9 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+    $visibility = ($_POST['visibility'] ?? 'public') === 'friends' ? 'friends' : 'public';
+
     if (empty($errors)) {
-        $stmt = mysqli_prepare($conn, "INSERT INTO posts (user_id, content, image) VALUES (?, ?, ?)");
-        mysqli_stmt_bind_param($stmt, "iss", $user_id, $content, $image_name);
+        $stmt = mysqli_prepare($conn, "INSERT INTO posts (user_id, content, image, visibility) VALUES (?, ?, ?, ?)");
+        mysqli_stmt_bind_param($stmt, "isss", $user_id, $content, $image_name, $visibility);
 
         if (mysqli_stmt_execute($stmt)) {
             mysqli_stmt_close($stmt);
@@ -86,6 +88,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </label>
             <input type="file" name="image" id="image" accept="image/*" onchange="previewImage(event)">
             <img id="imagePreview" class="image-preview" style="display:none;">
+        </div>
+
+        <div class="visibility-selector">
+            <label class="visibility-option">
+                <input type="radio" name="visibility" value="public" checked>
+                <span class="visibility-icon">🌍</span>
+                <span class="visibility-label">Public <small>Friends + people you follow can see this</small></span>
+            </label>
+            <label class="visibility-option">
+                <input type="radio" name="visibility" value="friends">
+                <span class="visibility-icon">🔒</span>
+                <span class="visibility-label">Friends Only <small>Only accepted friends can see this</small></span>
+            </label>
         </div>
 
         <div class="create-post-footer">

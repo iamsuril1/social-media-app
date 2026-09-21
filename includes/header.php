@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../includes/functions.php';
-requireLogin(); 
+requireLogin(); // every page that includes header.php is auto-protected
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,6 +30,7 @@ requireLogin();
     <?php $unread_total = getUnreadMessageCount($conn, currentUserId()); ?>
     <div class="navbar-links">
         <a href="/social-media-app/index.php">Feed</a>
+        <a href="/social-media-app/search/users.php">Search</a>
         <a href="/social-media-app/friends/list.php">Friends</a>
         <a href="/social-media-app/chat/inbox.php" class="navbar-link-with-badge">
             Chat
